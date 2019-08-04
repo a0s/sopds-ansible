@@ -1,0 +1,65 @@
+---
+
+- docker_network:
+    name: "{{ sopds_network }}"
+
+- tempfile:
+    state: directory
+    suffix: sopds-build
+  register: tmpdir
+
+- template:
+    src: Dockerfile
+    dest: "{{ tmpdir.path }}/Dockerfile"
+
+- template:
+    src: _docker_build_1
+    dest: "{{ tmpdir.path }}/_docker_build_1"
+
+- template:
+    src: _docker_build_2
+    dest: "{{ tmpdir.path }}/_docker_build_2"
+
+- shell: |
+    cd {{ tmpdir.path }} && \
+    docker build \
+      --tag {{ sopds_image }} \
+      --network {{ sopds_network }} \
+      --file {{ tmpdir.path }}/Dockerfile \
+      --build-arg DB_ENGINE={{ sopds_db_engine }} \
+      --build-arg DB_HOST={{ sopds_db_host }} \
+      --build-arg DB_NAME={{ sopds_db_name }} \
+      --build-arg DB_PASSWORD={{ sopds_db_password }} \
+      --build-arg DB_PORT={{ sopds_db_port }} \
+      --build-arg DB_USER={{ sopds_db_user }} \
+      --build-arg SOPDS_AUTH={{ sopds_auth }} \
+      --build-arg SOPDS_ROOT_LIB={{ sopds_root_lib }} \
+      --build-arg SUPERUSER_EMAIL={{ sopds_superuser_email }} \
+      --build-arg SUPERUSER_NAME={{ sopds_superuser_name }} \
+      --build-arg SUPERUSER_PASSWORD={{ sopds_superuser_password }} \
+      .
+
+- template:
+    src: sopds-web.service
+    dest: /etc/systemd/system/{{ sopds_web_service }}.service
+
+- systemd:
+    state: restarted
+    name: "{{ sopds_web_service }}"
+    enabled: true
+    daemon_reload: true
+
+- template:
+    src: sopds-scanner.service
+    dest: /etc/systemd/system/{{ sopds_scanner_service }}.service
+
+- systemd:
+    state: restarted
+    name: "{{ sopds_scanner_service }}"
+    enabled: true
+    daemon_reload: true
+
+- file:
+    path: "{{ tmpdir.path }}"
+    state: absent
+  ignore_errors: true

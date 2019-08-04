@@ -1,0 +1,27 @@
+---
+
+#################
+### MAIN PART ###
+#################
+
+sopds_host_path_to_books: /path/to/your/library
+sopds_superuser_name: superuser_name
+sopds_superuser_password: superuser_password
+sopds_superuser_email: superuser_name@sopds.localhost
+
+###################
+### COMMON PART ###
+###################
+
+postgres_db: sopds
+postgres_network: sopds
+postgres_password: sopds
+postgres_service: sopds-postgres
+postgres_user: sopds
+postgres_volume: sopds-postgres-data
+
+sopds_db_host: sopds-postgres
+sopds_db_name: sopds
+sopds_db_password: sopds
+sopds_db_user: sopds
+sopds_postgres_service: sopds-postgres

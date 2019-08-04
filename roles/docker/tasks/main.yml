@@ -1,0 +1,40 @@
+---
+
+- apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+
+- apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+
+- shell: lsb_release -cs
+  register: release
+  changed_when: false
+
+- apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ release.stdout }} stable"
+    update_cache: true
+
+- shell: apt-cache madison docker-ce
+  register: search
+  changed_when: false
+
+- shell: apt-cache madison docker-ce | grep {{ docker_version }} | awk -F'|' '{gsub(/ /, "", $2); print $2}'
+  register: docker_ce_version
+  changed_when: false
+
+- shell: apt-cache madison docker-ce-cli | grep {{ docker_version }} | awk -F'|' '{gsub(/ /, "", $2); print $2}'
+  register: docker_ce_cli_version
+  changed_when: false
+
+- apt:
+    name:
+      - docker-ce={{ docker_ce_version.stdout }}
+      - docker-ce-cli={{ docker_ce_version.stdout }}
+      - containerd.io
+
+- pip:
+    name: docker

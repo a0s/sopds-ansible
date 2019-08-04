@@ -1,0 +1,9 @@
+---
+
+postgres_service: postgres
+postgres_image: postgres:11
+postgres_volume: postgres
+postgres_network: postgres
+postgres_db: postgres
+postgres_user: postgres
+postgres_password: postgres

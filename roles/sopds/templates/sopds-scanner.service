@@ -1,0 +1,21 @@
+[Unit]
+Description=SOPDS Scanner
+After=docker.service
+Requires=docker.service
+After={{ sopds_postgres_service }}.service
+Requires={{ sopds_postgres_service }}.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker kill {{ sopds_scanner_service }}
+ExecStartPre=-/usr/bin/docker rm {{ sopds_scanner_service }}
+ExecStart=/usr/bin/docker run \
+  --name {{ sopds_scanner_service }} \
+  --volume {{ sopds_host_path_to_books }}:{{ sopds_root_lib }} \
+  --network {{ sopds_network }} \
+  {{ sopds_image }} \
+  python3 manage.py sopds_scanner start
+ExecStop=/usr/bin/docker stop {{ sopds_scanner_service }}
+
+[Install]
+WantedBy=multi-user.target

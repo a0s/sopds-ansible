@@ -1,0 +1,14 @@
+---
+
+- docker_network:
+    name: "{{ postgres_network }}"
+
+- template:
+    src: postgres.service
+    dest: /etc/systemd/system/{{ postgres_service }}.service
+
+- systemd:
+    state: restarted
+    name: "{{ postgres_service }}"
+    enabled: true
+    daemon_reload: true

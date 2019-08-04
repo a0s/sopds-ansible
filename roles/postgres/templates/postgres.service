@@ -1,0 +1,22 @@
+[Unit]
+Description=SOPDS Postgres
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker kill {{ postgres_service }}
+ExecStartPre=-/usr/bin/docker rm {{ postgres_service }}
+ExecStart=/usr/bin/docker run \
+  --env POSTGRES_DB={{ postgres_db }} \
+  --env POSTGRES_USER={{ postgres_user }} \
+  --env POSTGRES_PASSWORD={{ postgres_password }} \
+  --env PGDATA=/var/lib/postgresql/data/pgdata \
+  --name {{ postgres_service }} \
+  --mount type=volume,source={{ postgres_volume }},destination=/var/lib/postgresql/data/pgdata \
+  --network {{ postgres_network }} \
+  {{ postgres_image }}
+ExecStop=/usr/bin/docker stop {{ postgres_service }}
+
+[Install]
+WantedBy=multi-user.target

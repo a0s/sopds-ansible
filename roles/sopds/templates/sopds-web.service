@@ -1,0 +1,22 @@
+[Unit]
+Description=SOPDS Web
+After=docker.service
+Requires=docker.service
+After={{ sopds_postgres_service }}.service
+Requires={{ sopds_postgres_service }}.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker kill {{ sopds_web_service }}
+ExecStartPre=-/usr/bin/docker rm {{ sopds_web_service }}
+ExecStart=/usr/bin/docker run \
+  --name {{ sopds_web_service }} \
+  --volume {{ sopds_host_path_to_books }}:{{ sopds_root_lib }} \
+  --network {{ sopds_network }} \
+  --publish {{ sopds_host }}:{{ sopds_port }}:8001 \
+  {{ sopds_image }} \
+  python3 manage.py sopds_server start
+ExecStop=/usr/bin/docker stop {{ sopds_web_service }}
+
+[Install]
+WantedBy=multi-user.target

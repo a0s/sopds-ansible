@@ -1,0 +1,23 @@
+---
+
+- hosts: sopds
+  gather_facts: false
+  pre_tasks:
+    - raw: apt-get -y install \
+        python \
+        python-setuptools \
+        python-pip \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+        python-dev \
+        ccze \
+        aptitude \
+        ncdu
+      changed_when: false
+
+- hosts: sopds
+  roles:
+    - docker
+    - postgres
+    - sopds
