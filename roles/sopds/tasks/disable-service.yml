@@ -1,0 +1,14 @@
+---
+
+- name: Disable service
+  systemd:
+    state: stopped
+    name: "{{ service_name }}"
+    enabled: false
+    daemon_reload: true
+  ignore_errors: true
+
+- name: Remove service file
+  file:
+    path: "/etc/systemd/system/{{ service_name }}.service"
+    state: absent

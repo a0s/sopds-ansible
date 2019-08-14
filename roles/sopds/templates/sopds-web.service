@@ -2,8 +2,8 @@
 Description=SOPDS Web
 After=docker.service
 Requires=docker.service
-After={{ sopds_postgres_service }}.service
-Requires={{ sopds_postgres_service }}.service
+After={{ sopds_wait_for }}.service
+Requires={{ sopds_wait_for }}.service
 
 [Service]
 Restart=always
@@ -13,7 +13,7 @@ ExecStart=/usr/bin/docker run \
   --name {{ sopds_web_service }} \
   --volume {{ sopds_host_path_to_books }}:{{ sopds_root_lib }} \
   --network {{ sopds_network }} \
-  --publish {{ sopds_host }}:{{ sopds_port }}:8001 \
+  --publish {{ sopds_web_host }}:{{ sopds_web_port }}:8001 \
   {{ sopds_image }} \
   python3 manage.py sopds_server start
 ExecStop=/usr/bin/docker stop {{ sopds_web_service }}

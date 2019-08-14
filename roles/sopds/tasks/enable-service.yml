@@ -1,0 +1,13 @@
+---
+
+- name: Copy service file
+  template:
+    src: "{{ service_name }}.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+
+- name: Enable service
+  systemd:
+    state: restarted
+    name: "{{ service_name }}"
+    enabled: true
+    daemon_reload: true

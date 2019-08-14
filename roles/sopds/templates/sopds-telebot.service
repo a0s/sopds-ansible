@@ -1,5 +1,5 @@
 [Unit]
-Description=SOPDS Scanner
+Description=SOPDS Web
 After=docker.service
 Requires=docker.service
 After={{ sopds_wait_for }}.service
@@ -7,15 +7,15 @@ Requires={{ sopds_wait_for }}.service
 
 [Service]
 Restart=always
-ExecStartPre=-/usr/bin/docker kill {{ sopds_scanner_service }}
-ExecStartPre=-/usr/bin/docker rm {{ sopds_scanner_service }}
+ExecStartPre=-/usr/bin/docker kill {{ sopds_web_service }}
+ExecStartPre=-/usr/bin/docker rm {{ sopds_web_service }}
 ExecStart=/usr/bin/docker run \
-  --name {{ sopds_scanner_service }} \
+  --name {{ sopds_web_service }} \
   --volume {{ sopds_host_path_to_books }}:{{ sopds_root_lib }} \
   --network {{ sopds_network }} \
   {{ sopds_image }} \
-  python3 manage.py sopds_scanner start
-ExecStop=/usr/bin/docker stop {{ sopds_scanner_service }}
+  python3 manage.py sopds_server start
+ExecStop=/usr/bin/docker stop {{ sopds_web_service }}
 
 [Install]
 WantedBy=multi-user.target

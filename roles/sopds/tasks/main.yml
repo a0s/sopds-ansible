@@ -32,32 +32,45 @@
       --build-arg DB_PASSWORD={{ sopds_db_password }} \
       --build-arg DB_PORT={{ sopds_db_port }} \
       --build-arg DB_USER={{ sopds_db_user }} \
-      --build-arg SOPDS_AUTH={{ sopds_auth }} \
+      --build-arg SOPDS_AUTH={{ sopds_web_auth }} \
       --build-arg SOPDS_ROOT_LIB={{ sopds_root_lib }} \
-      --build-arg SUPERUSER_EMAIL={{ sopds_superuser_email }} \
-      --build-arg SUPERUSER_NAME={{ sopds_superuser_name }} \
-      --build-arg SUPERUSER_PASSWORD={{ sopds_superuser_password }} \
+      --build-arg SUPERUSER_EMAIL={{ sopds_web_superuser_email }} \
+      --build-arg SUPERUSER_NAME={{ sopds_web_superuser_name }} \
+      --build-arg SUPERUSER_PASSWORD={{ sopds_web_superuser_password }} \
       .
 
-- template:
-    src: sopds-web.service
-    dest: /etc/systemd/system/{{ sopds_web_service }}.service
+- import_tasks: enable-service.yml
+  vars:
+    service_name: sopds-web
+  when: sopds_web_enabled
 
-- systemd:
-    state: restarted
-    name: "{{ sopds_web_service }}"
-    enabled: true
-    daemon_reload: true
+- import_tasks: disable-service.yml
+  vars:
+    service_name: sopds-web.service
+  when: not sopds_web_enabled
 
-- template:
-    src: sopds-scanner.service
-    dest: /etc/systemd/system/{{ sopds_scanner_service }}.service
 
-- systemd:
-    state: restarted
-    name: "{{ sopds_scanner_service }}"
-    enabled: true
-    daemon_reload: true
+- import_tasks: enable-service.yml
+  vars:
+    service_name: sopds-scanner
+  when: sopds_scanner_enabled
+
+- import_tasks: disable-service.yml
+  vars:
+    service_name: sopds-scanner.service
+  when: not sopds_scanner_enabled
+
+
+- import_tasks: enable-service.yml
+  vars:
+    service_name: sopds-telebot
+  when: sopds_telebot_enabled
+
+- import_tasks: disable-service.yml
+  vars:
+    service_name: sopds-telebot.service
+  when: not sopds_telebot_enabled
+
 
 - file:
     path: "{{ tmpdir.path }}"

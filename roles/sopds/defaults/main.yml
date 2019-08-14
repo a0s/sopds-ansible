@@ -1,13 +1,11 @@
 ---
 
+sopds_host_path_to_books: /books
+
 sopds_github: https://github.com/mitshel/sopds
 sopds_network: sopds
 sopds_image: sopds
-sopds_postgres_service: postgres
-sopds_web_service: sopds-web
-sopds_scanner_service: sopds-scanner
-sopds_port: 8001
-sopds_host: 127.0.0.1
+sopds_wait_for: postgres
 
 sopds_db_engine: django.db.backends.postgresql_psycopg2
 sopds_db_name: sopds
@@ -17,7 +15,18 @@ sopds_db_host: sopds
 sopds_db_port: 5432
 
 sopds_root_lib: /books
-sopds_auth: True
-sopds_superuser_name: sopds
-sopds_superuser_password: sopds
-sopds_superuser_email: sopds@sopds.localhost
+
+sopds_scanner_enabled: true
+sopds_scanner_service: sopds-scanner
+
+sopds_web_enabled: true
+sopds_web_service: sopds-web
+sopds_web_port: 8001
+sopds_web_host: 127.0.0.1
+sopds_web_auth: True
+sopds_web_superuser_name: sopds
+sopds_web_superuser_password: sopds
+sopds_web_superuser_email: sopds@sopds.localhost
+
+sopds_telebot_enabled: false
+sopds_telebot_service: sopds-telebot

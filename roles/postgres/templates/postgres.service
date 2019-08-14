@@ -13,7 +13,7 @@ ExecStart=/usr/bin/docker run \
   --env POSTGRES_PASSWORD={{ postgres_password }} \
   --env PGDATA=/var/lib/postgresql/data/pgdata \
   --name {{ postgres_service }} \
-  --mount type=volume,source={{ postgres_volume }},destination=/var/lib/postgresql/data/pgdata \
+  --mount type={{ postgres_volume_type }},source={{ postgres_volume }},destination=/var/lib/postgresql/data/pgdata \
   --network {{ postgres_network }} \
   {{ postgres_image }}
 ExecStop=/usr/bin/docker stop {{ postgres_service }}
